@@ -3,14 +3,15 @@
     <base-dialog :show="!!error" title="An error ocurred" @close="handleError">
       <p>{{ error }}</p>
     </base-dialog>
-    <coach-filter @change-filter="setFilters"></coach-filter>>
+    <coach-filter @change-filter="setFilters"></coach-filter>
     <section>
       <base-card>
         <div class="controls">
           <base-button mode="outline" @click="loadCoaches(true)"
             >Refresh</base-button
           >
-          <base-button v-if="!isCoach && !isLoading" link to="/register"
+          <base-button link to="/auth?redirect=register" v-if="!isLoggedIn">Login to Register as a Coach</base-button>
+          <base-button v-if="!isCoach && !isLoading && isLoggedIn" link to="/register"
             >Register as a Coach</base-button
           >
         </div>
@@ -56,7 +57,7 @@ export default {
   },
   computed: {
     isCoach() {
-      return this.$store.getters['coaches/isCOach'];
+      return this.$store.getters['coaches/isCoach'];
     },
     filteredCoaches() {
       const coaches = this.$store.getters['coaches/coaches'];
@@ -76,6 +77,9 @@ export default {
     hasCoaches() {
       return !this.isLoading && this.$store.getters['coaches/hasCoaches'];
     },
+    isLoggedIn() {
+      return this.$store.getters['isAuthenticated'];
+    }
   },
   methods: {
     setFilters(updatedFilters) {
